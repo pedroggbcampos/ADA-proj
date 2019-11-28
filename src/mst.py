@@ -5,7 +5,7 @@ import random
 import math
 import collections
 
-DEBUG = False  # False when you submit to kattis
+DEBUG = True  # False when you submit to kattis
 
 N = 0
 W = 0
@@ -67,8 +67,6 @@ def approx_connected_comps(subgraph_weight):
 
         bi_sum += bfs(node, neighbors, subgraph_weight, round(x))
         i += 1
-    if DEBUG:
-        print(str(N) + "    "+str(s))
     return (N/s)*bi_sum
 
 
@@ -112,9 +110,9 @@ def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
 if __name__ == '__main__':
 
     if DEBUG:
-        N = 9_659_558  # the number of nodes
+        N = 6  # the number of nodes
         E = 0.01  # desired accuracy (epsilon)
-        W = 20  # largest weight in our graph
+        W = 50  # largest weight in our graph
 
         def getNeighbors(node):
             leftNeighbor = (node-1) % N
