@@ -5,26 +5,38 @@ import random
 import math
 import collections
 
-DEBUG = True  # False when you submit to kattis
+DEBUG = False  # False when you submit to kattis
 
 N = 0
 W = 0
 E = 0.0
 
+NEIGHBOR_DICT = {}
+
 
 def approx_mst_weight():
     # global N, E, W
     estimators_sum = 0
-    for i in range(1, W - 1):
-        estimators_sum += approx_connected_comps(i)
+    i = 1
+    approx_cc = 0
+    while (i < W):
+        # for i in range(1, W):
+        approx_cc = approx_connected_comps(i)
+        estimators_sum += approx_cc
+        if (approx_cc < 1.5):
+            estimators_sum += W-i-1
+            break
+        i += 1
     return N - W + estimators_sum
 
 
 def approx_connected_comps(subgraph_weight):
     # global N, E, W
-    s = math.ceil(10/(E ** 2))  # choose s
+    s = min(math.ceil(10/(E ** 2)), N)  # choose s
     bi_sum = 0
-    for i in range(1, s):
+    i = 1
+    while (i < s):
+        # for i in range(1, s+1):
         rand = 0.0
         while rand == 0.0:
             rand = random.uniform(1, 0)
@@ -32,15 +44,31 @@ def approx_connected_comps(subgraph_weight):
         x = 1/rand
 
         node_in_comp = False
-        while not node_in_comp:
-            node = random.randint(0, N-1)
-            neighbors = getNeighbors(node)
-            for neighbor in neighbors:
-                if neighbor[1] < subgraph_weight:
-                    node_in_comp = True
-                    break
+        # node = random.randint(0, N-1)
+        # neighbors = getNeighbors(node)
 
-        bi_sum += bfs(node, neighbors, subgraph_weight, math.ceil(x))
+        node = random.randint(0, N-1)
+        # neighbors = getNeighbors(node)
+        if (not node in NEIGHBOR_DICT):
+            neighbors = getNeighbors(node)
+        else:
+            neighbors = NEIGHBOR_DICT[node]
+
+        # for j in range(subgraph_weight, 0, -1):
+        #     if not neighbors.get(j) == None:
+        #         node_in_comp = True
+        #         break
+
+
+            # for neighbor in neighbors:
+            #     if neighbor[1] <= subgraph_weight:
+            #         node_in_comp = True
+            #         break
+
+        bi_sum += bfs(node, neighbors, subgraph_weight, round(x))
+        i += 1
+    if DEBUG:
+        print(str(N) + "    "+str(s))
     return (N/s)*bi_sum
 
 
@@ -55,15 +83,27 @@ def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
     while queue:
         node = queue.popleft()
         if node != root_node:
-            neighbors = getNeighbors(node)
-        for neighbor in neighbors:
-            if neighbor not in visited and neighbor[1] <= subgraph_weight:
-                visited.add(neighbor)
-                queue.append(neighbor)
+            if (not node in NEIGHBOR_DICT):
+                neighbors = getNeighbors(node)
+            else:
+                neighbors = NEIGHBOR_DICT[node]
+
+
+        for weight, neighbors_list in neighbors.items():
+            for node_id in neighbors_list:
+                if (node_id not in visited) and (weight <= subgraph_weight):
+                    visited.add(node_id)
+                    queue.append(node_id)
+            
+
+        # for neighbor in neighbors:
+        #     if (neighbors[0] not in visited) and (neighbor[1] <= subgraph_weight):
+        #         visited.add(neighbor[0])
+        #         queue.append(neighbor[0])
         n_visited += 1
         if n_visited == max_nodes_to_visit:
             break
-    if queue.empty():
+    if not queue:
         return 1
     else:
         return 0
@@ -72,15 +112,17 @@ def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
 if __name__ == '__main__':
 
     if DEBUG:
-        N = 6  # the number of nodes
-        E = 0.1  # desired accuracy (epsilon)
-        W = 2  # largest weight in our graph
+        N = 9_659_558  # the number of nodes
+        E = 0.01  # desired accuracy (epsilon)
+        W = 20  # largest weight in our graph
 
         def getNeighbors(node):
             leftNeighbor = (node-1) % N
             rightNeighbor = (node+1) % N
-            weight = 1
-            return [(leftNeighbor, weight), (rightNeighbor, weight)]
+            weight1 = random.randint(1, W)
+            weight2 = random.randint(1, W)
+            # return [(leftNeighbor, weight1), (rightNeighbor, weight2)]
+            return {weight1: [leftNeighbor], weight2: [rightNeighbor]}
 
     else:
         N = int(sys.stdin.readline())  # read number of nodes from the input
@@ -97,7 +139,15 @@ if __name__ == '__main__':
             # the answer has the form 'numNeighbors neighbor1 weight1 neighbor2 weight2 ...'
             # we want to have a list of the form:
             #[ (neighbor1, weight1), (neighbor2, weight2) , ...]
-            return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
+
+            # result = {i: () for i in range(1, W+1)}
+            result = {}
+            for i in range(1, len(line), 2):
+                if not int(line[i+1]) in result.keys():
+                    result[int(line[i+1])] = []
+                result[int(line[i+1])].append(int(line[i]))
+            return result
+            # return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
 
     appr_weight = approx_mst_weight()
     print("end " + str(appr_weight))
