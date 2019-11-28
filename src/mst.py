@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+
 import sys
 import random
 import math
 import collections
 
+DEBUG = True  # False when you submit to kattis
 
 N = 0
 W = 0
@@ -10,7 +13,7 @@ E = 0.0
 
 
 def approx_mst_weight():
-    global N, E, W
+    # global N, E, W
     estimators_sum = 0
     for i in range(1, W - 1):
         estimators_sum += approx_connected_comps(i)
@@ -18,8 +21,8 @@ def approx_mst_weight():
 
 
 def approx_connected_comps(subgraph_weight):
-    global N, E, W
-    s = math.ceil(10/(E ^ 2))  # choose s
+    # global N, E, W
+    s = math.ceil(10/(E ** 2))  # choose s
     bi_sum = 0
     for i in range(1, s):
         rand = 0.0
@@ -38,11 +41,11 @@ def approx_connected_comps(subgraph_weight):
                     break
 
         bi_sum += bfs(node, neighbors, subgraph_weight, math.ceil(x))
-    return (n/s)*bi_sum
+    return (N/s)*bi_sum
 
 
 def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
-    global N, E, W
+    # global N, E, W
 
     root_node = node
     visited = set()
@@ -67,13 +70,10 @@ def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
 
 
 if __name__ == '__main__':
-    global N, E, W
-
-    DEBUG = True  # False when you submit to kattis
 
     if DEBUG:
         N = 6  # the number of nodes
-        E = 0.1  # desired accuracy
+        E = 0.1  # desired accuracy (epsilon)
         W = 2  # largest weight in our graph
 
         def getNeighbors(node):
@@ -81,6 +81,7 @@ if __name__ == '__main__':
             rightNeighbor = (node+1) % N
             weight = 1
             return [(leftNeighbor, weight), (rightNeighbor, weight)]
+
     else:
         N = int(sys.stdin.readline())  # read number of nodes from the input
         # we read the desired approximation
@@ -97,6 +98,7 @@ if __name__ == '__main__':
             # we want to have a list of the form:
             #[ (neighbor1, weight1), (neighbor2, weight2) , ...]
             return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
+
     appr_weight = approx_mst_weight()
     print("end " + str(appr_weight))
     sys.stdout.flush()
