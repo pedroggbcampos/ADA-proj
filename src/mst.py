@@ -32,9 +32,10 @@ def approx_mst_weight():
 
 def approx_connected_comps(subgraph_weight):
     # global N, E, W
-    s = min(math.ceil(10/(E ** 2)), N)  # choose s
+    s = min(math.ceil(1/(E ** 2)), N)  # choose s
     bi_sum = 0
     i = 1
+    nodes_visited = [-1]
     while (i < s):
         # for i in range(1, s+1):
         rand = 0.0
@@ -47,7 +48,11 @@ def approx_connected_comps(subgraph_weight):
         # node = random.randint(0, N-1)
         # neighbors = getNeighbors(node)
 
-        node = random.randint(0, N-1)
+        node = -1
+        while node in nodes_visited:
+            node = random.randint(0, N-1)
+        nodes_visited.append(node)
+        # node = random.randint(0, N-1)
         # neighbors = getNeighbors(node)
         if (not node in NEIGHBOR_DICT):
             neighbors = getNeighbors(node)
@@ -110,7 +115,7 @@ def bfs(node, neighbors, subgraph_weight, max_nodes_to_visit):
 if __name__ == '__main__':
 
     if DEBUG:
-        N = 6  # the number of nodes
+        N = 208  # the number of nodes
         E = 0.01  # desired accuracy (epsilon)
         W = 50  # largest weight in our graph
 
