@@ -29,10 +29,15 @@ def approx_mst_weight():
         #     # estimators_sum += W-i-1
         #     break
         i += 1
+
+    # This queries Kattis more than needed, this can be optimized
+    # There are floating point points, hence it queries too much
+    # Maybe write a special method just for this last approximation?
     last_acc = approx_connected_comps(W)
-    if (last_acc > 5):
-        estimators_sum += (last_acc + 1)
-        estimators_sum -= (approx_cc-1)*(W+1)
+    if (last_acc > 7):
+        estimators_sum += (last_acc)
+        estimators_sum -= 1
+        estimators_sum -= (last_acc-1)*(W+1)
     return N - W + estimators_sum
 
 
