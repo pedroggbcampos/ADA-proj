@@ -18,7 +18,7 @@ NEIGHBOR_DICT = {}
 
 
 def approx_mst_weight():
-    
+
     estimators_sum = 0
     i = 1
     approx_cc = 0
@@ -29,12 +29,15 @@ def approx_mst_weight():
         #     # estimators_sum += W-i-1
         #     break
         i += 1
+    last_acc = approx_connected_comps(W)
+    if (last_acc > 5):
+        estimators_sum += (last_acc + 1)
+        estimators_sum -= (approx_cc-1)*(W+1)
     return N - W + estimators_sum
 
 
 def approx_connected_comps(subgraph_weight):
-    
-    s = min(math.ceil(10/(E**2)), N)  # choose s 
+    s = min(math.ceil(4/(E**2)), N)  # choose s
     # s = N/100
     # s = math.ceil(5/(E**2))  # choose s
     bi_sum = 0
@@ -44,7 +47,7 @@ def approx_connected_comps(subgraph_weight):
         # rand = numpy.random.random_sample()
         # rand = random.random()
         # choose X according to Pr[X ≥ k] = 1/k : X = 1/rand(0, 1) behaves like this : for example, P(1/rand(0,1) >= 2 ) = 1/2
-        x = 1/random.uniform(0,1)
+        x = 1/random.uniform(0, 1)
 
         # node_in_comp = False
 
@@ -81,7 +84,7 @@ def bfs(node, subgraph_weight, max_nodes_to_visit):
                 if (node_id not in visited) and (weight <= subgraph_weight):
                     visited.add(node_id)
                     queue.append(node_id)
-            
+
         n_visited += 1
         if n_visited >= max_nodes_to_visit:
             break
