@@ -68,7 +68,7 @@ def approx_connected_comps(subgraph_weight):
         # nodes_visited.append(node)
 
         # node = nodes[i]
-        bi_sum += bfs(node, subgraph_weight, min(math.floor(x),500))
+        bi_sum += bfs(node, subgraph_weight, min(math.floor(x), 500))
         i += 1
     if DEBUG:
         print("n: "+str(N)+",   s: "+str(s))
@@ -106,8 +106,8 @@ def bfs(node, subgraph_weight, max_nodes_to_visit):
         return 0
 
 
-def weightEdge(e):
-    return e[2]
+def weightEdge(edge):
+    return edge[2]
 
 
 def make_set(vertice):
@@ -134,10 +134,6 @@ def union(vertice1, vertice2):
 
 
 def kruskalAlgorithm():
-    """ N, eps, W
-    getNeighboursKruskal(node) returns list of (neighbour,weight) """
-    # parent = dict()
-    # rank = dict()
     mst = set()
     edgeList = []
     for node in range(N):
@@ -154,10 +150,10 @@ def kruskalAlgorithm():
             union(v1, v2)
             mst.add(edge)
 
-    return measureWeight(mst)
+    return deterministicWeight(mst)
 
 
-def measureWeight(mst):
+def deterministicWeight(mst):
     weight = 0
     for i in mst:
         weight += i[2]
@@ -172,10 +168,11 @@ def getNeighborsKruskal(node):
         leftNeighbor = (node-1) % N
         rightNeighbor = (node+1) % N
         weight = 1
-        return [( leftNeighbor, weight), ( rightNeighbor, weight)]
+        return [(leftNeighbor, weight), (rightNeighbor, weight)]
     else:
         line = sys.stdin.readline().split()
         return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
+
 
 if __name__ == '__main__':
 
@@ -197,7 +194,6 @@ if __name__ == '__main__':
         # we read the desired approximation
         E = float(sys.stdin.readline()) - 1
         W = int(sys.stdin.readline())  # read the largest weight of the graph
-        
 
         def getNeighbors(node):
             # ask kattis for the next node
@@ -218,10 +214,10 @@ if __name__ == '__main__':
             return result
             # return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
 
-    s1 = (int) (W*math.log(W+1)*math.log(W+1))/((E**2)*2.4)
-    s2 = (int) (5/(E**2))
-    s = max(s1,s2)
-    if (W<4):
+    s1 = (int)(W*math.log(W+1)*math.log(W+1))/((E**2)*4)
+    s2 = (int)(5/(E**2))
+    s = min(s1, s2)
+    if (W < 10):
         s = s1
     #s = min(s1, s2)
     # if W >= 10000:
