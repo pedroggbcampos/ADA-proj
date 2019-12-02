@@ -214,10 +214,10 @@ if __name__ == '__main__':
             return result
             # return [(int(line[i]), int(line[i+1])) for i in range(1, len(line), 2)]
 
-    s1 = (int)(W*math.log(W+1)*math.log(W+1))/((E**2)*4)
+    s1 = (int)(W*math.log(W+1)*math.log(W+1))/((E**2)*2.4)
     s2 = (int)(5/(E**2))
     s = min(s1, s2)
-    if (W < 10):
+    if (W < 4):
         s = s1
     #s = min(s1, s2)
     # if W >= 10000:
